@@ -38,6 +38,7 @@ public:
 
 double Distance(Point A, Point B) 
 {
+    // pow(pow(A.getX() - B.getX(), 2) + pow(A.getY() - B.getY(), 2), 0.5);
     return A.Distance(B);
 }
 
