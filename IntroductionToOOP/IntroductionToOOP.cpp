@@ -1,57 +1,52 @@
 ﻿#include <iostream>
+#include <cmath>
 using namespace std;
 
 class Point
 {
 private:
 
-    double x = 0;
-    double y = 0;
+    double x, y;
 
-    bool CheckValue(double value) 
-    {
-        return value >= 0 && value <= 100;
-    }
+    bool CheckValue(double value) { return value >= 0 && value <= 100; }
 
 public:
-    
-    double GetX() 
-    { 
-        return x; 
-    }
-    double GetY()
-    {
-        return y;
-    }
 
-    void SetX(double value) 
+    Point() { x = y = 0; }
+    Point(double x, double y) { setX(x); setY(y); }
+
+    double getX() { return x; }
+    double getY() { return y; }
+
+    void setX(double value) 
     {
         if (CheckValue(value))
             x = value;
     }
 
-    void SetY(double value)
+    void setY(double value)
     {
         if (CheckValue(value))
             y = value;
     }
 
-    void Print() 
+    double Distance(Point obj) 
     {
-        cout << x << "\t" << y << endl;
+        return pow(pow(x - obj.x, 2) + pow(y - obj.y, 2), 0.5);
     }
 };
 
+double Distance(Point A, Point B) 
+{
+    return A.Distance(B);
+}
 
 int main()
 {
-    Point A;
-
-    A.SetX(13.41);
-    A.SetY(1.73);
+    Point A(1.72, 3.12);
+    Point B(5.91, 0.39);
     
-    cout << A.GetX() << "\t" << A.GetY() << endl;
-    A.Print();
+    cout << A.Distance(B) << endl;
 
-    return 0;
+    cout << Distance(A, B) << endl;
 }
