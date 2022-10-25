@@ -35,3 +35,8 @@
 /.vs
 /NULLTerminatedLines/.vs/NULLTerminatedLines
 /NULLTerminatedLines/x64/Debug
+/Fraction/x64/Debug
+*.vcxproj
+*.filters
+*.user
+/NULLTerminatedLines/.vs/HomeWork/v17
