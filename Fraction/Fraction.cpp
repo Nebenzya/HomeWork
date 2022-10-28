@@ -1,6 +1,8 @@
 ﻿#include<iostream>
 using namespace std;
 
+int CommonDivisor(int left, int right);
+
 class Fraction
 {
 	int integer, numerator, denominator;
@@ -164,11 +166,24 @@ public:
 
 		if (numerator == denominator) {
 			integer++;
-			setNumerator(0); setDenominator(1);
+			numerator = 0; denominator = 1;
 		}
 
 		return *this;
 	}
+
+	void Reduce() 
+	{
+		this->ToImproper();
+		int divisor = CommonDivisor(numerator, denominator);
+		if (divisor > 1) 
+		{
+			numerator /= divisor;
+			denominator /= divisor;
+		}
+		this->ToProper();
+	}
+
 };
 
 #pragma region operatorsOld
@@ -211,6 +226,18 @@ Fraction operator+(Fraction left, Fraction right)
 }
 
 #pragma endregion
+
+int CommonDivisor(int left,int right) 
+{
+	if (left % right == 0) return right;
+
+	int max = left < right ? left : right;
+	for (int i = max / 2; i >= 2; i--)
+	{
+		if (left % i == 0 && right % i == 0) return i;
+	}
+	return 1;
+}
 
 Fraction operator-(Fraction left, Fraction right)
 {
@@ -256,10 +283,10 @@ bool operator!=(const Fraction& left, const Fraction& right)
 	return !(left==right);
 }
 
-bool operator>(Fraction left, Fraction right)
+bool operator>(const Fraction& left, const Fraction& right)
 {
-	left.ToImproper(); right.ToImproper(); // НЕВЕРНО! нужно привести к общему знаменателю
-	return left.getNumerator()>right.getNumerator() && left.getNumerator() != right.getNumerator();
+	Fraction ans = left / right;
+	return ans.getInteger() >= 1 && ans.getNumerator() != 0;
 }
 
 bool operator<(const Fraction& left, const Fraction& right)
@@ -279,9 +306,9 @@ bool operator<=(const Fraction& left, const Fraction& right)
 
 void main()
 {
-	Fraction A(1, 2, 7);
-	Fraction B(1, 2, 3);
-	
+	Fraction A(20, 12);
+	Fraction B(1, 2, 5);
+	A.Reduce();
 	cout << (A > B) << endl;
 	cout << (A < B) << endl;
 	cout << (A != B) << endl;
