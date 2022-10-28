@@ -1,6 +1,12 @@
 ﻿#include<iostream>
 using namespace std;
+//#define DEBUG
 
+class Fraction;
+Fraction operator*(Fraction left, Fraction right);
+Fraction operator/(const Fraction& left, const Fraction& right);
+Fraction operator+(Fraction left, Fraction right);
+Fraction operator-(Fraction left, Fraction right);
 int CommonDivisor(int left, int right);
 
 class Fraction
@@ -94,7 +100,7 @@ public:
 
 #pragma endregion
 
-#pragma region OperatorsOld
+#pragma region Operators
 
 	Fraction& operator=(const Fraction& other)
 	{
@@ -106,27 +112,22 @@ public:
 #endif // DEBUG
 		return *this;
 	}
-
 	Fraction& operator++()
 	{
 		integer++;
 		return *this;
 	}
-
 	Fraction operator++(int)
 	{
 		Fraction old = *this;
 		integer++;
 		return old;
 	}
-#pragma endregion
-
 	Fraction& operator--()
 	{
 		integer--;
 		return *this;
 	}
-
 	Fraction& operator()(int integer = 0, int numerator = 0, int denominator = 1)
 	{
 		setInteger(integer);
@@ -134,8 +135,26 @@ public:
 		setDenominator(denominator);
 		return *this;
 	}
+	Fraction& operator*=(const Fraction& right)
+	{
+		return *this = *this * right;
+	}
+	Fraction& operator+=(const Fraction& right)
+	{
+		return *this = *this + right;
+	}
+	Fraction& operator-=(const Fraction& right)
+	{
+		return *this = *this - right;
+	}
+	Fraction& operator/=(const Fraction& right)
+	{
+		return *this = *this / right;
+	}
 
-#pragma region FunctionsOld
+#pragma endregion
+
+#pragma region Functions
 
 	Fraction& ToImproper()
 	{
@@ -150,9 +169,6 @@ public:
 		swap(Inverted.numerator, Inverted.denominator);
 		return Inverted;
 	}
-
-#pragma endregion
-
 	Fraction& ToProper()
 	{
 		integer = numerator / denominator;
@@ -171,22 +187,21 @@ public:
 
 		return *this;
 	}
-
-	void Reduce() 
+	void Reduce()
 	{
 		this->ToImproper();
 		int divisor = CommonDivisor(numerator, denominator);
-		if (divisor > 1) 
+		if (divisor > 1)
 		{
 			numerator /= divisor;
 			denominator /= divisor;
 		}
 		this->ToProper();
 	}
-
+#pragma endregion
 };
 
-#pragma region operatorsOld
+#pragma region operators
 
 ostream& operator<<(ostream& os, const Fraction& obj)
 {
@@ -224,6 +239,44 @@ Fraction operator+(Fraction left, Fraction right)
 		left.getDenominator() * right.getDenominator()
 	).ToProper();
 }
+Fraction operator-(Fraction left, Fraction right)
+{
+	left.ToImproper();
+	right.ToImproper();
+
+	return Fraction
+	(
+		left.getNumerator() * right.getDenominator() - right.getNumerator() * left.getDenominator(),
+		left.getDenominator() * right.getDenominator()
+	).ToProper();
+}
+bool operator==(Fraction left, Fraction right)
+{
+	left.ToImproper(); 
+	right.ToImproper();
+	return left.getNumerator() * right.getDenominator() == right.getNumerator() * left.getDenominator();
+}
+bool operator!=(const Fraction& left, const Fraction& right)
+{
+	return !(left == right);
+}
+bool operator>(const Fraction& left, const Fraction& right)
+{
+	Fraction ans = left / right;
+	return ans.getInteger() >= 1 && ans.getNumerator() != 0;
+}
+bool operator<(const Fraction& left, const Fraction& right)
+{
+	return !(left > right) && left != right;
+}
+bool operator>=(const Fraction& left, const Fraction& right)
+{
+	return left == right || left > right;
+}
+bool operator<=(const Fraction& left, const Fraction& right)
+{
+	return left == right || left < right;
+}
 
 #pragma endregion
 
@@ -239,81 +292,10 @@ int CommonDivisor(int left,int right)
 	return 1;
 }
 
-Fraction operator-(Fraction left, Fraction right)
-{
-	left.ToImproper();
-	right.ToImproper();
-
-	return Fraction
-	(
-		left.getNumerator() * right.getDenominator() - right.getNumerator() * left.getDenominator(),
-		left.getDenominator() * right.getDenominator()
-	).ToProper();
-}
-
-Fraction& operator+=(Fraction& left, const Fraction& right)
-{
-	return left = left + right;
-}
-
-Fraction& operator-=(Fraction& left, const Fraction& right)
-{
-	return left = left - right;
-}
-
-Fraction& operator*=(Fraction& left, const Fraction& right)
-{
-	return left = left * right;
-}
-
-Fraction& operator/=(Fraction& left, const Fraction& right)
-{
-	return left = left / right;
-}
-
-bool operator==(const Fraction& left, const Fraction& right)
-{
-	return  left.getInteger() == right.getInteger() &&
-			left.getNumerator() == right.getNumerator() &&
-			left.getDenominator() == right.getDenominator();
-}
-
-bool operator!=(const Fraction& left, const Fraction& right)
-{
-	return !(left==right);
-}
-
-bool operator>(const Fraction& left, const Fraction& right)
-{
-	Fraction ans = left / right;
-	return ans.getInteger() >= 1 && ans.getNumerator() != 0;
-}
-
-bool operator<(const Fraction& left, const Fraction& right)
-{
-	return !(left > right) && left != right;
-}
-
-bool operator>=(const Fraction& left, const Fraction& right)
-{
-	return left == right || left > right;
-}
-
-bool operator<=(const Fraction& left, const Fraction& right)
-{
-	return left == right || left < right;
-}
 
 void main()
 {
-	Fraction A(20, 12);
-	Fraction B(1, 2, 5);
-	A.Reduce();
-	cout << (A > B) << endl;
-	cout << (A < B) << endl;
-	cout << (A != B) << endl;
+	Fraction A(14, 10);
+	Fraction B(1,2,5);
 	cout << (A == B) << endl;
-	cout << (A >= B) << endl;
-	cout << (A <= B) << endl;
-
 }
