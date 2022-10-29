@@ -13,7 +13,7 @@ int CommonDivisor(int left, int right);
 class Fraction
 {
 	int integer, numerator, denominator;
-
+	int rounding = 100; // точность десятичных дробей
 public:
 #pragma region Get/Set
 
@@ -64,6 +64,13 @@ public:
 #ifdef DEBUG
 		cout << "1ArgConstructor:" << this << endl;
 #endif // DEBUG
+	}
+	Fraction(double value)
+	{
+		setInteger(value);
+		setNumerator((value-integer) * rounding);
+		setDenominator(rounding);
+		Reduce();
 	}
 	Fraction(int numerator, int denominator)
 	{
@@ -152,6 +159,14 @@ public:
 	{
 		return *this = *this / right;
 	}
+	explicit operator int() const
+	{
+		return this->integer + numerator / denominator;
+	}
+	explicit operator double()const
+	{
+		return integer + (double)numerator / denominator;
+	}
 
 #pragma endregion
 
@@ -200,32 +215,6 @@ public:
 		this->ToProper();
 	}
 #pragma endregion
-
-	//       =========================== Home Work ================================================
-
-	Fraction(double value)
-	{
-		double integer, numerator, rounding = 100;
-		numerator = modf(value, &integer);
-
-		setInteger(value);
-		setNumerator(numerator * rounding);
-		setDenominator(rounding);
-		ToImproper();
-		Reduce();
-	}
-	operator int()
-	{
-		return this->integer;
-	}
-
-	operator double()
-	{
-		ToImproper();
-		double answer = (double)numerator / denominator;
-		ToProper();
-		return answer;
-	}
 };
 
 #pragma region operators
@@ -323,10 +312,10 @@ int CommonDivisor(int left,int right)
 void main()
 {
 	Fraction A(2, 3, 4);
-	int a = A;
+	int a = (int)A;
 	cout << a << endl;
 
-	double b = A;
+	double b = (double)A;
 	cout << b << endl;
 
 	Fraction B = 2.75;
