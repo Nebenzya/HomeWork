@@ -1,4 +1,5 @@
 ﻿#include<iostream>
+#include<cmath>
 using namespace std;
 //#define DEBUG
 
@@ -199,6 +200,32 @@ public:
 		this->ToProper();
 	}
 #pragma endregion
+
+	//       =========================== Home Work ================================================
+
+	Fraction(double value)
+	{
+		double integer, numerator, rounding = 100;
+		numerator = modf(value, &integer);
+
+		setInteger(value);
+		setNumerator(numerator * rounding);
+		setDenominator(rounding);
+		ToImproper();
+		Reduce();
+	}
+	operator int()
+	{
+		return this->integer;
+	}
+
+	operator double()
+	{
+		ToImproper();
+		double answer = (double)numerator / denominator;
+		ToProper();
+		return answer;
+	}
 };
 
 #pragma region operators
@@ -295,7 +322,13 @@ int CommonDivisor(int left,int right)
 
 void main()
 {
-	Fraction A(14, 10);
-	Fraction B(1,2,5);
-	cout << (A == B) << endl;
+	Fraction A(2, 3, 4);
+	int a = A;
+	cout << a << endl;
+
+	double b = A;
+	cout << b << endl;
+
+	Fraction B = 2.75;
+	cout << B << endl;
 }
