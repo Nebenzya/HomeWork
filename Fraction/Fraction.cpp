@@ -231,6 +231,15 @@ ostream& operator<<(ostream& os, const Fraction& obj)
 	else if (obj.getInteger() == 0) os << 0;
 	return os;
 }
+istream& operator>>(istream& in, Fraction& other)
+{
+	int integer, numerator, denominator;
+	in >> integer >> numerator >> denominator;
+	other.setInteger(integer);
+	other.setNumerator(numerator);
+	other.setDenominator(denominator);
+	return in;
+}
 Fraction operator*(Fraction left, Fraction right)
 {
 	left.ToImproper();
@@ -311,13 +320,7 @@ int CommonDivisor(int left,int right)
 
 void main()
 {
-	Fraction A(2, 3, 4);
-	int a = (int)A;
-	cout << a << endl;
-
-	double b = (double)A;
-	cout << b << endl;
-
-	Fraction B = 2.75;
-	cout << B << endl;
+	Fraction A;
+	cin >> A;
+	cout << A << endl;
 }
