@@ -1,26 +1,6 @@
 ﻿#include<iostream>
 using namespace std;
 
-
-
-/*
-
-1. В классе Fraction перегрузить оператор ввода:
-
-istream& operator>>(istream& in, Fraction& other)
-{
-	int integer, numerator, denominator;
-	in >> integer >> numerator >> denominator;
-	other.setInteger(integer);
-	other.setNumerator(numerator);
-	other.setDenominator(denominator);
-	return in;
-}
-
-*/
-
-
-
 #define DEBUG
 
 class String
@@ -47,7 +27,7 @@ public:
 		for (int i = 0; i < size; i++)
 			this->str[i] = str[i];
 		#ifdef DEBUG
-		cout << "Constructor:\t" << endl;
+		cout << "Constructor:\t" << this << endl;
 		#endif // DEBUG
 	}
 	String(const String& other)
@@ -58,6 +38,17 @@ public:
 		#ifdef DEBUG
 		cout << "CopyConstructor:" << this << endl;
 		#endif // DEBUG
+	}
+	String(String&& other)
+	{
+		this->size = other.size;
+		this->str = other.str;
+		other.size = 0;
+		other.str = nullptr;
+		#ifdef DEBUG
+		cout << "MoveConstructor:" << this << endl;
+		#endif // DEBUG
+
 	}
 	~String()
 	{
@@ -77,6 +68,18 @@ public:
 			this->str[i] = other.str[i];
 		#ifdef DEBUG
 		cout << "CopyAssignment:\t" << this << endl;
+		#endif // DEBUG
+
+		return *this;
+	}
+	String& operator=(String&& other)
+	{
+		this->size = other.size;
+		this->str = other.str;
+		other.size = 0;
+		other.str = nullptr;
+		#ifdef DEBUG
+		cout << "ShallowCopyAssignment: " << this << endl;
 		#endif // DEBUG
 
 		return *this;
@@ -116,8 +119,8 @@ String operator+(const String& left, const String& right)
 
 void main()
 {
-	String str1 = "Hello";
-	String str2 = "World";
-	String str3 = str1 + str2;
-	cout << str3 << endl;
+	String str4;
+	str4 = String("Shallow");
+	cout << "\n" << str4 << "\n" << endl;
+
 }
