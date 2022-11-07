@@ -68,7 +68,7 @@ public:
 	Fraction(double value)
 	{
 		setInteger(value);
-		setNumerator((value-integer) * rounding);
+		setNumerator((value - integer) * rounding);
 		setDenominator(rounding);
 		Reduce();
 	}
@@ -277,7 +277,7 @@ Fraction operator-(Fraction left, Fraction right)
 }
 bool operator==(Fraction left, Fraction right)
 {
-	left.ToImproper(); 
+	left.ToImproper();
 	right.ToImproper();
 	return left.getNumerator() * right.getDenominator() == right.getNumerator() * left.getDenominator();
 }
@@ -305,7 +305,7 @@ bool operator<=(const Fraction& left, const Fraction& right)
 
 #pragma endregion
 
-int CommonDivisor(int left,int right) 
+int CommonDivisor(int left, int right)
 {
 	if (left % right == 0) return right;
 

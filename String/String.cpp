@@ -1,4 +1,4 @@
-﻿#include<iostream>
+#include<iostream>
 using namespace std;
 
 #define DEBUG
@@ -16,9 +16,9 @@ public:
 	{
 		this->size = size;
 		this->str = new char[size] {};
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "DefConstructor:\t" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 	}
 	String(const char str[])
 	{
@@ -26,18 +26,18 @@ public:
 		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 			this->str[i] = str[i];
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "Constructor:\t" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 	}
 	String(const String& other)
 	{
 		this->size = other.size;
 		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)this->str[i] = other.str[i];
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "CopyConstructor:" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 	}
 	String(String&& other)
 	{
@@ -45,17 +45,17 @@ public:
 		this->str = other.str;
 		other.size = 0;
 		other.str = nullptr;
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "MoveConstructor:" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 
 	}
 	~String()
 	{
 		delete[] this->str;
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "Destructor:\t" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 	}
 
 	String& operator=(const String& other)
@@ -66,9 +66,9 @@ public:
 		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 			this->str[i] = other.str[i];
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "CopyAssignment:\t" << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 
 		return *this;
 	}
@@ -78,9 +78,9 @@ public:
 		this->str = other.str;
 		other.size = 0;
 		other.str = nullptr;
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "ShallowCopyAssignment: " << this << endl;
-		#endif // DEBUG
+#endif // DEBUG
 
 		return *this;
 	}
