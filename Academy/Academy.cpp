@@ -26,10 +26,12 @@ public:
 	}
 
 	//				Methods:
-	void print()const
+	virtual string toString()const
 	{
-		cout << last_name << " " << first_name << " " << age << "\n";
+		return get_last_name() + " " + get_first_name() + " " + to_string(get_age());
 	}
+
+	
 };
 
 class Student : public Human
@@ -71,10 +73,11 @@ public:
 	}
 
 	//					Methods:
-	void print()const
+	string toString()const override
 	{
-		Human::print();
-		cout << specialty << " " << group << " " << rating << " " << attendance << endl;
+		string str = Human::toString() + " " + get_specialty() + " " + get_group() +
+			" " + to_string(get_rating()) + " " + to_string(get_attendance());
+		return str;
 	}
 };
 
@@ -107,71 +110,65 @@ public:
 	}
 
 	//				Methods:
-	void print()const
+	string toString()const override
 	{
-		Human::print();
-		cout << specialty << " " << experience << endl;
+		return Human::toString() + "\n" + get_specialty() + " " + to_string(get_experience());
 	}
 };
 
-
-class Graduate : Student
+class Undergrad :public Student
 {
-	const double minRating = 60, minAttendance = 80;
-	const int minDiplomSize = 3;
-
-	vector<string>diplomProject;
-
+	string topic;
 public:
-	Graduate(const Student& stud) : Student(stud)
-	{
-	}
+	const string& get_topic()const { return topic; }
+	void set_topic(const string& topic) { this->topic = topic; }
 
-	~Graduate()
+	//				Constructors:
+	Undergrad(const Student& st, string topic) : Student(st)
 	{
+		set_topic(topic);
+		cout << "GConstructor:\t" << this << endl;
 	}
-
-	void WritingDiplom(const string str) 
+	~Undergrad()
 	{
-		diplomProject.push_back(str);
+		cout << "GDestructor:\t" << this << endl;
 	}
-
-	bool DiplomDone() const
+	//				Methods:
+	string toString()const override
 	{
-		return diplomProject.size() > minDiplomSize;
-	}
-
-	bool AdmissionToExam() const
-	{
-		return rating > minRating && attendance > minAttendance && DiplomDone();
-	}
-
-	void Print() 
-	{
-		Student::print();
+		return Student::toString() + " " + get_topic();
 	}
 };
 
+//  =============================  VARIANT #1 =====================================
+ostream& operator<<(ostream& os, const Human& obj) { return os << obj.toString(); }
+ostream& operator<<(ostream& os, const Student& obj) { return os << obj.toString(); }
+ostream& operator<<(ostream& os, const Teacher& obj) { return os << obj.toString(); }
+ostream& operator<<(ostream& os, const Undergrad& obj) { return os << obj.toString(); }
 
+//  =============================  VARIANT #2 =====================================
+ostream& operator<<(ostream& os, const Human* obj) { return os << obj->toString(); }
+
+
+#define delimiter cout << "\n------------------------------------------\n" << endl;
 
 void main()
 {
-	setlocale(LC_ALL, "");
-	Human human("Montana", "Antoio", 25);
-	human.print();
+	//  =============================  VARIANT #1 =====================================
+	Human hum("Schreder", "Hank", 40);
+	cout << hum << endl;
+	delimiter
 
-	Student stud(human, "Chemistry", "WW_220", 90, 95);
-	stud.print();
+	Student stud(hum, "Criminalistic", "WW_220", 95, 80);
+	cout << stud << endl;
+	delimiter
 
-	Graduate grad(stud);
+	Undergrad und(stud, "How to catch Heisenberg");
+	cout << und << endl;
+	delimiter
 
-	while (!grad.DiplomDone())
-	{
-		string str;
-		cin >> str;
-		grad.WritingDiplom(str);
-	}
-
-	grad.Print();
-	cout << "\nadmitted to the exam:\t" << grad.AdmissionToExam() << endl;
+	//  =============================  VARIANT #2 =====================================
+	Human* h = &und;
+	cout << h << endl;
+	delimiter
 }
