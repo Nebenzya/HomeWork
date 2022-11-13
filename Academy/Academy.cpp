@@ -1,8 +1,6 @@
 ﻿#include<iostream>
 #include<string>
-#include<vector>
 using namespace std;
-	
 
 class Human
 {
@@ -17,13 +15,7 @@ public:
 	//				Constructors:
 	Human(const string& last_name, const string& first_name, unsigned int age) :
 		last_name(last_name), first_name(first_name), age(age)
-	{
-		cout << "HConstructor:\t" << this << endl;
-	}
-	~Human()
-	{
-		cout << "HDestructor:\t" << this << endl;
-	}
+	{}
 
 	//				Methods:
 	virtual string toString()const
@@ -59,17 +51,12 @@ public:
 	}
 
 	//					Constructors:
-	Student(const Human& homo, const string& specialty, const string& group, double rating, double attendance) : Human(homo)
+	Student(const string& last_name, const string& first_name, unsigned int age, const string& specialty, const string& group, double rating, double attendance) : Human(last_name, first_name, age)
 	{
 		this->specialty = specialty;
 		this->group = group;
 		this->rating = rating;
 		this->attendance = attendance;
-		cout << "SConstructor:\t" << this << endl;
-	}
-	~Student()
-	{
-		cout << "SDestructor:\t" << this << endl;
 	}
 
 	//					Methods:
@@ -98,15 +85,10 @@ public:
 	}
 
 	//				Constructors:
-	Teacher(const Human& homo, const string& specialty, unsigned int experience) : Human(homo)
+	Teacher(const string& last_name, const string& first_name, unsigned int age, const string& specialty, unsigned int experience) : Human(last_name, first_name, age)
 	{
 		set_specialty(specialty);
 		set_experience(experience);
-		cout << "TConstructor:\t" << this << endl;
-	}
-	~Teacher()
-	{
-		cout << "TDestructor:\t" << this << endl;
 	}
 
 	//				Methods:
@@ -124,7 +106,7 @@ public:
 	void set_topic(const string& topic) { this->topic = topic; }
 
 	//				Constructors:
-	Undergrad(const Student& st, string topic) : Student(st)
+	Undergrad(const string& last_name, const string& first_name, unsigned int age, const string& specialty, const string& group, double rating, double attendance, string topic) : Student(last_name, first_name, age, specialty, group, rating, attendance)
 	{
 		set_topic(topic);
 		cout << "GConstructor:\t" << this << endl;
@@ -140,35 +122,4 @@ public:
 	}
 };
 
-//  =============================  VARIANT #1 =====================================
-ostream& operator<<(ostream& os, const Human& obj) { return os << obj.toString(); }
-ostream& operator<<(ostream& os, const Student& obj) { return os << obj.toString(); }
-ostream& operator<<(ostream& os, const Teacher& obj) { return os << obj.toString(); }
-ostream& operator<<(ostream& os, const Undergrad& obj) { return os << obj.toString(); }
-
-//  =============================  VARIANT #2 =====================================
 ostream& operator<<(ostream& os, const Human* obj) { return os << obj->toString(); }
-
-
-#define delimiter cout << "\n------------------------------------------\n" << endl;
-
-void main()
-{
-	//  =============================  VARIANT #1 =====================================
-	Human hum("Schreder", "Hank", 40);
-	cout << hum << endl;
-	delimiter
-
-	Student stud(hum, "Criminalistic", "WW_220", 95, 80);
-	cout << stud << endl;
-	delimiter
-
-	Undergrad und(stud, "How to catch Heisenberg");
-	cout << und << endl;
-	delimiter
-
-	//  =============================  VARIANT #2 =====================================
-	Human* h = &und;
-	cout << h << endl;
-	delimiter
-}
