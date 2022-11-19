@@ -6,7 +6,7 @@ using namespace std;
 void main()
 {
 	setlocale(LC_ALL, "");
-
+	std::string fileName = "group.txt";
 	const int SIZE = 6;
 	Human* group[SIZE] =
 	{
@@ -20,7 +20,7 @@ void main()
 
 
 	std::ofstream fout;	
-	fout.open("File.txt", std::ios::app);
+	fout.open(fileName, std::ios::app);
 	
 	for (size_t i = 0; i < SIZE; i++)
 	{
@@ -30,22 +30,6 @@ void main()
 	}
 	fout.close();			
 
-	
-	ifstream fin("File.txt");
-	if (fin.is_open())
-	{
-		int count = 0;
-		const int SIZEBUF = 1024;
-		char buffer[SIZEBUF] = {};
-		while (!fin.eof())
-		{
-			fin.getline(buffer, SIZEBUF);
-			cout << buffer << endl;
-		}
-		fin.close();
-	}
-	else
-	{
-		std::cerr << "Error: file not found" << endl;
-	}
+	int n = 0;
+	Human** newGroup = Load(fileName, n);
 }
