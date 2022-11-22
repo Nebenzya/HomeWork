@@ -1,5 +1,6 @@
 ﻿#include<iostream>
 #include<string>
+#include<fstream>
 using namespace std;
 
 class Human
@@ -123,3 +124,51 @@ public:
 };
 
 ostream& operator<<(ostream& os, const Human* obj) { return os << obj->toString(); }
+
+void Save(Human* group[], const int n, const std::string& filename)
+{
+	std::ofstream fout(filename);
+	for (int i = 0; i < n; i++)
+	{
+		fout.width(15);
+		fout << std::left;
+		fout << typeid(*group[i]).name() << ":\t";
+		fout << group[i]->toString() << endl;
+	}
+	fout.close();
+	std::string command = "notepad " + filename;
+	system(command.c_str());
+}
+
+Human** Load(const std::string& filename, int& n)
+{
+	std::ifstream fin(filename);
+	//1) Вычисляем размер массива:
+	if (fin.is_open())
+	{
+		std::string buffer;
+		for (n = 0; !fin.eof(); n++)
+		{
+			std::getline(fin, buffer);
+		}
+		n--;
+	}
+
+	Human** group = new Human * [n] {};
+
+	fin.clear();
+	fin.seekg(0);
+
+	if (fin.is_open())
+	{
+		std::string type;
+		for (int i = 0; i < n; i++)
+		{
+			std::getline(fin, type, ' ');
+			group[i] = HumanFactory(type);
+			fin >> *group[i];
+		}
+	}
+
+	return group;
+}
