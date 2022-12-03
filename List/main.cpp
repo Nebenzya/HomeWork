@@ -1,6 +1,6 @@
 //ForwardList
 #include<iostream>
-using namespace std;
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -10,11 +10,12 @@ using std::endl;
 class Element
 {
 	int Data;
-	Element* pNext;	
+	Element* pNext;
 
 public:
+	friend class ForwardList;
 
-	Element(int Data, Element* pNext = nullptr) :Data(Data), pNext(pNext)
+	Element(int data, Element* pNext = nullptr) :Data(data), pNext(pNext)
 	{
 		cout << "EConstructor:\t" << this << endl;
 	}
@@ -23,158 +24,154 @@ public:
 		cout << "EDestructor:\t" << this << endl;
 	}
 
-	friend class ForwardList;
+	int get_data()const { return Data; }
+	operator int() const { return get_data(); }
+
+	 Element* operator++() const
+	 {
+		return pNext;
+	 }
+
+	 Element* operator++(int) const
+	 {
+		 return pNext;
+	 }
 };
 
 class ForwardList
 {
 	Element* Head;
-	Element* LastElement;
 	unsigned int size;
 
 public:
 	int get_size()const { return size; }
 
-	ForwardList() :Head(nullptr), size(0)
+	ForwardList() : Head(nullptr), size(0)
 	{
 		cout << "LConstructor:\t" << this << endl;
 	}
-
-	ForwardList(const ForwardList& obj) 
+	ForwardList(const ForwardList& other) : ForwardList()
 	{
-		Element* Temp = obj.Head;
-		while (Temp)
-		{
-			this->push_back(Temp->Data);
-			Temp = Temp->pNext;
-		}
+		*this = other;
 
 		cout << "LCopyConstructor:\t" << this << endl;
 	}
 
+	ForwardList(std::initializer_list<int> lst) : ForwardList()
+	{
+		for (int i : lst)
+			push_back(i);
+	}
 	~ForwardList()
 	{
+		clear();
 		cout << "LDestructor:\t" << this << endl;
+	}
 
-		Element* Temp = Head;
-		while (size)
+	void push_front(int data)
+	{
+		insert(0, data);
+	}
+	void push_back(int data)
+	{
+		insert(size,data);
+	}
+	void insert(unsigned int index, int data)
+	{
+		if (index > size) { cout << "Error: Out of range" << endl; return; }
+
+		if (index == 0)
+			Head = new Element(data, Head);
+		else
 		{
-			Element* erased = Temp;
-			Temp = Temp->pNext;
-			delete erased;
-			size--;
+			Element* Temp = Head;
+			for (int i = 0; i < index - 1; i++)
+				Temp = Temp->pNext;
+			Temp->pNext = new Element(data, Temp->pNext);
 		}
-	}
-
-	void push_front(int Data)
-	{
-		Element* New = new Element(Data);
-
-		if (!size) LastElement = New;
-
-		New->pNext = Head;
-		Head = New;
 		size++;
 	}
-	void push_front(Element* el) {
-		if (!size) LastElement = el;
-
-		el->pNext = Head;
-		Head = el;
-		size++;
-	}
-
-	void push_back(int Data)
-	{
-		if (Head == nullptr)return push_front(Data);
-		Element* New = new Element(Data);
-
-		LastElement->pNext = New;
-		LastElement = New;
-		size++;
-	}
-	void push_back(Element* el) {
-		if (Head == nullptr)return push_front(el);
-		LastElement->pNext = el;
-		LastElement = el;
-		size++;
-	}
-
-
-	void insert(int Index, int Data)
-	{
-		if (Index == 0)return push_front(Data);
-		if (Index > size)
-		{
-			cout << "Error: Out of range" << endl;
-			return;
-		}
-
-		Element* New = new Element(Data);
-		Element* Temp = Head;
-
-		for (int i = 0; i < Index - 1; i++)
-			Temp = Temp->pNext;
-
-		New->pNext = Temp->pNext;
-		Temp->pNext = New;
-		size++;
-	}
-
 	void pop_front()
 	{
-		Element* erased = Head;
-		Head = Head->pNext;
-		delete erased;
-		size--;
+		erase(0);
 	}
 	void pop_back()
 	{
-		if (Head == nullptr)return;
-		if (Head->pNext == nullptr)return pop_front();
-		Element* Temp = Head;
+		erase(size - 1);
+	}
+	void erase(unsigned int index)
+	{
+		if (index >= size) { cout << "Error: Out of range" << endl; return; }
 
-		while (Temp->pNext->pNext)
-			Temp = Temp->pNext;
-
-		delete Temp->pNext;
-		Temp->pNext = nullptr;
+		Element* erased = nullptr;
+		if (index == 0) 
+		{
+			erased = Head;
+			Head = Head->pNext;
+		}
+		else 
+		{
+			for (Element* Temp = Head, int i = 0; Temp; Temp = Temp->pNext, i++)
+			{
+				if (i == index - 1) 
+				{
+					erased = Temp->pNext;
+					Temp->pNext = erased->pNext;
+					break;
+				}
+			}
+		}
+		delete erased;
 		size--;
 	}
-
-
 	void print()const
 	{
-		Element* Temp = Head;
 		cout << "Head:\t" << Head << endl;
-		while (Temp)
+
+		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
 		{
-			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-			Temp = Temp->pNext;	
+			cout << Temp << "\t" << Temp->Data << "\t" << Temp->pNext << endl;
 		}
-		cout << "Количество элементов списка:\t  " << size << endl;
+		cout << "Count elements of list\t  " << size << endl;
+	}
+	void clear()
+	{
+		while (Head)
+			pop_front();
+	}
+	void copy_value(const ForwardList& other)
+	{
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_back(Temp->Data);
+	}
+	void reverse() 
+	{
+		ForwardList buffer;
+		for (int i = size; i; i--)
+		{
+			buffer.push_back(this->operator[](i-1));
+		}
+		this->clear();
+		this->copy_value(buffer);
 	}
 
-	ForwardList& operator=(const ForwardList& obj)
+	ForwardList& operator=(const ForwardList& other)
 	{
-		this->Head = obj.Head;
-		this->LastElement = obj.LastElement;
-		this->size = obj.size;
+		if (this == &other)return *this;
+		this->clear();
+		this->copy_value(other);
 		return *this;
 	}
 	ForwardList& operator=(ForwardList&& obj)
 	{
 		this->Head = obj.Head;
-		this->LastElement = obj.LastElement;
 		this->size = obj.size;
 		obj.Head = nullptr;
-		obj.LastElement = nullptr;
 		obj.size = 0;
 		return *this;
 	}
-
-	int operator[](unsigned int index)const 
- 	{
+	int operator[](unsigned int index)const
+	{
 		if (index < size)
 		{
 			Element* Temp = Head;
@@ -187,47 +184,29 @@ public:
 			}
 		}
 		else
-		{
 			cout << "Error Index!" << endl;
-		}
 	}
+	Element* begin() { return Head; }
+	Element* end() const { return nullptr; } // LastElement
 };
 
-ForwardList operator+(const ForwardList &left, const ForwardList &right) 
+ForwardList operator+(const ForwardList& left, const ForwardList& right)
 {
 	ForwardList result;
-	for (int i = 0; i < left.get_size(); i++)
-	{
-		result.push_back(left[i]);
-	}
+	result.copy_value(left);
+	result.copy_value(right);
 
-	for (int i = 0; i < right.get_size(); i++)
-	{
-		result.push_back(right[i]);
-	}
 	return result;
 }
 
 void main()
 {
-	setlocale(LC_ALL, "");
-
-
-	ForwardList list1;
-	list1.push_back(3);
-	list1.push_back(5);
-	list1.push_back(8);
-	list1.push_back(13);
-	list1.push_back(21);
-
-	ForwardList list2;
-	list2.push_back(34);
-	list2.push_back(55);
-	list2.push_back(89);
-
-	list1.print();
-	list2.print();
-
-	ForwardList list3 = list1 + list2;
-	list3.print();
+	ForwardList list = { 27, 31, 59, 13, 21 };
+	list.print();
+	list.reverse();
+	for (int i : list)
+	{
+		cout << i << "\t";
+	}
+	cout << endl;
 }
