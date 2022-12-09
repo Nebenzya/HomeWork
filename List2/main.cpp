@@ -1,94 +1,93 @@
 #include<iostream>
+#include<chrono>
 
 using std::cin;
 using std::cout;
 using std::endl;
 
-#define tab "\t"
 
-class Element
+
+
+class MyList
 {
-	int Data;
-	Element* pNext;
-	Element* pPrev;
+private:
 
-public:
-	friend class ForwardList;
-	friend class Iterator;
-
-	Element(int data, Element* pNext = nullptr, Element* pPrev = nullptr) :Data(data), pNext(pNext), pPrev(pPrev) {}
-	~Element() {}
-
-	int get_data()const { return Data; }
-	operator int() const { return get_data(); }
-};
-
-class Iterator {
-	Element* Temp;
-public:
-	Iterator(Element* temp) : Temp(temp) {}
-
-	Iterator& operator++()
+	class Element
 	{
-		Temp = Temp->pNext;
-		return *this;
-	}
+	public:
+		int Data;
+		Element* pNext;
+		Element* pPrev;
+		Element(int data, Element* pNext = nullptr, Element* pPrev = nullptr) :Data(data), pNext(pNext), pPrev(pPrev) {}
+		~Element() { }
+		int get_data()const { return Data; }
+		operator int() const { return get_data(); }
+	};
 
-	Iterator& operator--()
+	class Iterator 
 	{
-		Temp = Temp->pPrev;
-		return *this;
-	}
+	public:
+		Element* Temp;
+		Iterator(Element* temp) : Temp(temp) {}
+		Iterator& operator++()
+		{
+			Temp = Temp->pNext;
+			return *this;
+		}
+		Iterator& operator--()
+		{
+			Temp = Temp->pPrev;
+			return *this;
+		}
+		bool operator==(const Iterator& other)const 
+		{
+			return this->Temp == other.Temp;
+		}
+		bool operator!=(const Iterator& other)const
+		{
+			return this->Temp != other.Temp;
+		}
+		const int& operator*()const
+		{
+			return Temp->Data;
+		}
+		int& operator*()
+		{
+			return Temp->Data;
+		}
+	};
 
-	bool operator==(const Iterator& other)const
-	{
-		return this->Temp == other.Temp;
-	}
-	bool operator!=(const Iterator& other)const
-	{
-		return this->Temp != other.Temp;
-	}
-
-	const int& operator*()const
-	{
-		return Temp->Data;
-	}
-	int& operator*()
-	{
-		return Temp->Data;
-	}
-};
-
-class ForwardList
-{
 	Element* Head;
 	Element* Tail;
 	unsigned int size;
 
 public:
-	
-
-	ForwardList() : Head(nullptr), Tail(nullptr), size(0) {}
-	ForwardList(const ForwardList& other) : ForwardList()
+	MyList() : Head(nullptr), Tail(nullptr), size(0) {}
+	MyList(const MyList& other) : MyList()
 	{
 		*this = other;
 	}
-	ForwardList(const std::initializer_list<int>& lst) : ForwardList()
+	MyList(const std::initializer_list<int>& lst) : MyList()
 	{
 		for (int i : lst)
 			push_back(i);
 	}
-	~ForwardList()
+	~MyList()
 	{
 		clear();
 	}
 
-	int get_size()const { return size; }
+	int count()const { return size; }
 	void push_front(int data)
 	{
-		Head = new Element(data, Head, nullptr);
-		if (!Tail)
-			Tail = Head;
+		if (!size)
+		{
+			Head = Tail = new Element(data);
+			size++;
+			return;
+		}
+		Head = Head->pPrev = new Element(data, Head, nullptr);
+		
 		size++;
 	}
 	void push_back(int data)
@@ -97,7 +96,7 @@ public:
 			push_front(data);
 		else 
 		{
-			Tail->pPrev->pNext = Tail = new Element(data, nullptr, Tail);
+			Tail = Tail->pNext = new Element(data, nullptr, Tail);
 			size++;
 		}
 	}
@@ -131,18 +130,24 @@ public:
 	}
 	void pop_front()
 	{
-		Element* erased = Head;
+		if (Head == nullptr) return;
+		if (Head == Tail) {
+			delete Head;
+			Head = Tail = nullptr;
+			size--;
+			return;
+		}
 		Head = Head->pNext;
-		if(!Head->pPrev) Head->pPrev = nullptr;
-		delete erased;
+		delete Head->pPrev;
+		Head->pPrev = nullptr;
 		size--;
 	}
 	void pop_back()
 	{
-		Element* erased = Tail;
+		if (Head == Tail) pop_front();
 		Tail = Tail->pPrev;
-		if (!Head->pNext) Tail->pNext = nullptr;
-		delete erased;
+		delete Tail->pNext;
+		Tail->pNext = nullptr;
 		size--;
 	}
 	void erase(unsigned int index)
@@ -181,24 +186,23 @@ public:
 		cout << "Head:\t" << Head << endl;
 
 		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
-		{
 			cout << Temp << "\t" << Temp->get_data() << "\t" << Temp->pNext << "\t" << Temp->pPrev << endl;
-		}
-		cout << "Count elements of list\t  " << size << endl;
+		
+		cout << "Tail:\t" << Tail << endl << "Count elements of list\t  " << size << endl;
 	}
 	void clear()
 	{
 		while (Head)
 			pop_front();
 	}
-	void copy_value(const ForwardList& other)
+	void copy_value(const MyList& other)
 	{
 		for (int i : other)
 			push_back(i);
 	}
 	void reverse()
 	{
-		ForwardList buffer;
+		MyList buffer;
 		while (Head)
 		{
 			buffer.push_front(Head->get_data());
@@ -211,14 +215,14 @@ public:
 	}
 	Iterator begin() const { return Head; }
 	Iterator end() const { return nullptr; }
-	ForwardList& operator=(const ForwardList& other)
+	MyList& operator=(const MyList& other)
 	{
 		if (this == &other)return *this;
 		this->clear();
 		this->copy_value(other);
 		return *this;
 	}
-	ForwardList& operator=(ForwardList&& obj)
+	MyList& operator=(MyList&& obj)
 	{
 		this->Head = obj.Head;
 		this->Tail = obj.Tail;
@@ -228,31 +232,78 @@ public:
 		obj.size = 0;
 		return *this;
 	}
+
+	//////////////              NEW FUNCTIONS					////////////////
 	
+	void sort() 
+	{
+		if (size < 2) return;
+		bool isSorting = false;
+		while (!isSorting) 
+		{
+			isSorting = true;
+			for (Element* temp = Head; temp != nullptr; temp = temp->pNext)
+			{
+				if (temp->pNext != nullptr && temp->pNext->Data < temp->Data)
+				{
+					std::swap(temp->Data, temp->pNext->Data);
+					isSorting = false;
+				}
+			}
+		}
+	}
+	int min() 
+	{
+		if (size)
+		{
+			int result = INT32_MAX;
+			for (int i : *this)
+			{
+				if (i < result) result = i;
+			}
+			return result;
+		}
+	}
+	int max()
+	{
+		if (size)
+		{
+			int result = INT32_MIN;
+			for (int i : *this)
+			{
+				if (i > result) result = i;
+			}
+			return result;
+		}
+	}
 };
 
-ForwardList operator+(const ForwardList& left, const ForwardList& right)
+MyList operator+(const MyList& left, const MyList& right)
 {
-	ForwardList result;
+	MyList result;
 	result.copy_value(left);
 	result.copy_value(right);
-
 	return result;
 }
 
+std::chrono::steady_clock::time_point start;
+#define START start = std::chrono::steady_clock::now();
+#define RESULT cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << endl;
+
 void main()
 {
-	ForwardList list = { 3, 5, 8, 13, 21 };
-	list.print();
-	list.reverse();
-	list.erase(3);
-	list.print();
+	int n; cin >> n;
+	MyList list;
 
-	list.insert(4, 77);
-	list.print();
-	list.pop_front();
+	for (size_t i = 0; i < n; i++)
+	{
+		list.push_back(rand() % 1000);
+	}
 
-	for (int i : list)
+	cout << list.min() << "\t" << list.max() << endl;
+
+	list.sort();
+	for (int i : list) 
 	{
 		cout << i << "\t";
 	}

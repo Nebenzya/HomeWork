@@ -14,28 +14,48 @@ class Element
 
 public:
 	friend class ForwardList;
+	friend class Iterator;
 
-	Element(int data, Element* pNext = nullptr) :Data(data), pNext(pNext)
-	{
-		cout << "EConstructor:\t" << this << endl;
-	}
-	~Element()
-	{
-		cout << "EDestructor:\t" << this << endl;
-	}
+	Element(int data, Element* pNext = nullptr) :Data(data), pNext(pNext){}
+	~Element() {}
 
 	int get_data()const { return Data; }
 	operator int() const { return get_data(); }
+};
 
-	 Element* operator++() const
-	 {
-		return pNext;
-	 }
+class Iterator {
+	Element* Temp;
+public:
+	Iterator(Element* temp) : Temp(temp){}
 
-	 Element* operator++(int) const
-	 {
-		 return pNext;
-	 }
+	Iterator& operator++()
+	{
+		Temp = Temp->pNext;
+		return *this;
+	}
+	Iterator& operator++(int)
+	{
+		Temp = Temp->pNext;
+		return *this;
+	}
+
+	bool operator==(const Iterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+	bool operator!=(const Iterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+
+	const int& operator*()const
+	{
+		return Temp->Data;
+	}
+	int& operator*()
+	{
+		return Temp->Data;
+	}
 };
 
 class ForwardList
@@ -44,28 +64,25 @@ class ForwardList
 	unsigned int size;
 
 public:
-	int get_size()const { return size; }
+	int count()const { return size; }
 
 	ForwardList() : Head(nullptr), size(0)
 	{
-		cout << "LConstructor:\t" << this << endl;
 	}
 	ForwardList(const ForwardList& other) : ForwardList()
 	{
 		*this = other;
-
-		cout << "LCopyConstructor:\t" << this << endl;
 	}
 
-	ForwardList(std::initializer_list<int> lst) : ForwardList()
+	ForwardList(const std::initializer_list<int>& lst) : ForwardList()
 	{
 		for (int i : lst)
-			push_back(i);
+			push_front(i);
+		reverse();
 	}
 	~ForwardList()
 	{
 		clear();
-		cout << "LDestructor:\t" << this << endl;
 	}
 
 	void push_front(int data)
@@ -111,7 +128,8 @@ public:
 		}
 		else 
 		{
-			for (Element* Temp = Head, int i = 0; Temp; Temp = Temp->pNext, i++)
+			int i = 0;
+			for (Element* Temp = Head; Temp; Temp = Temp->pNext, i++)
 			{
 				if (i == index - 1) 
 				{
@@ -147,14 +165,17 @@ public:
 	void reverse() 
 	{
 		ForwardList buffer;
-		for (int i = size; i; i--)
+		while(Head)
 		{
-			buffer.push_back(this->operator[](i-1));
+			buffer.push_front(Head->Data);
+			pop_front();
 		}
-		this->clear();
-		this->copy_value(buffer);
+		this->Head = buffer.Head;
+		this->size = buffer.size;
+		buffer.Head = nullptr;
 	}
-
+	Iterator begin() { return Head; }
+	Iterator end() const { return nullptr; }
 	ForwardList& operator=(const ForwardList& other)
 	{
 		if (this == &other)return *this;
@@ -186,8 +207,6 @@ public:
 		else
 			cout << "Error Index!" << endl;
 	}
-	Element* begin() { return Head; }
-	Element* end() const { return nullptr; } // LastElement
 };
 
 ForwardList operator+(const ForwardList& left, const ForwardList& right)
@@ -203,7 +222,8 @@ void main()
 {
 	ForwardList list = { 27, 31, 59, 13, 21 };
 	list.print();
-	list.reverse();
+	list.reverse(); 
+	
 	for (int i : list)
 	{
 		cout << i << "\t";
