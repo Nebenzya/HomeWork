@@ -9,37 +9,35 @@ class MyList
 {
 private:
 
-	template<typename T>
 	class Element
 	{
 	public:
 		T Data;
-		Element<T>* pNext;
-		Element<T>* pPrev;
+		Element* pNext;
+		Element* pPrev;
 		Element(T data, Element* pNext = nullptr, Element* pPrev = nullptr) :Data(data), pNext(pNext), pPrev(pPrev) {}
 	};
 
-	template<typename T>
 	class Iterator
 	{
 	public:
-		Element<T>* Temp;
-		Iterator(Element<T>* temp) : Temp(temp) {}
-		Iterator<T>& operator++()
+		Element* Temp;
+		Iterator(Element* temp) : Temp(temp) {}
+		Iterator& operator++()
 		{
 			Temp = Temp->pNext;
 			return *this;
 		}
-		Iterator<T>& operator--()
+		Iterator& operator--()
 		{
 			Temp = Temp->pPrev;
 			return *this;
 		}
-		bool operator==(const Iterator<T>& other)const
+		bool operator==(const Iterator& other)const
 		{
 			return this->Temp == other.Temp;
 		}
-		bool operator!=(const Iterator<T>& other)const
+		bool operator!=(const Iterator& other)const
 		{
 			return this->Temp != other.Temp;
 		}
@@ -53,8 +51,8 @@ private:
 		}
 	};
 
-	Element<T>* Head;
-	Element<T>* Tail;
+	Element* Head;
+	Element* Tail;
 	unsigned int size;
 
 public:
@@ -76,11 +74,11 @@ public:
 	{
 		if (!size)
 		{
-			Head = Tail = new Element<T>(data);
+			Head = Tail = new Element(data);
 			size++;
 			return;
 		}
-		Head = Head->pPrev = new Element<T>(data, Head, nullptr);
+		Head = Head->pPrev = new Element(data, Head, nullptr);
 
 		size++;
 	}
@@ -90,7 +88,7 @@ public:
 			push_front(data);
 		else
 		{
-			Tail = Tail->pNext = new Element<T>(data, nullptr, Tail);
+			Tail = Tail->pNext = new Element(data, nullptr, Tail);
 			size++;
 		}
 	}
@@ -104,7 +102,7 @@ public:
 				push_back(data);
 			else
 			{
-				Element<T>* Temp;
+				Element* Temp;
 				if (index < size / 2)
 				{
 					Temp = Head;
@@ -117,7 +115,7 @@ public:
 					for (int i = size - 1; i > index; i--)
 						Temp = Temp->pPrev;
 				}
-				Temp->pPrev = Temp->pPrev->pNext = new Element<T>(data, Temp, Temp->pPrev);
+				Temp->pPrev = Temp->pPrev->pNext = new Element(data, Temp, Temp->pPrev);
 			}
 			size++;
 		}
@@ -205,8 +203,8 @@ public:
 		this->size = buffer.size;
 		buffer.Head = buffer.Tail = nullptr;
 	}
-	Iterator<T> begin() const { return Head; }
-	Iterator<T> end() const { return nullptr; }
+	Iterator begin() const { return Head; }
+	Iterator end() const { return nullptr; }
 	MyList<T>& operator=(const MyList<T>& other)
 	{
 		if (this == &other)return *this;
