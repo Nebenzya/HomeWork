@@ -29,7 +29,7 @@ public:
 	}
 	~Tree() { clear(); }
 
-	int count()const { return _ñount(this->Root); }
+	int count()const { return _count(this->Root); }
 
 	void insert(int data) {
 		if (this->Root == nullptr) this->Root = new Element(data);
@@ -73,9 +73,9 @@ public:
 
 private:
 
-	int _ñount(Element* Root)const
+	int _count(Element* Root)const
 	{
-		return !Root ? 0 : _ñount(Root->pLeft) + _ñount(Root->pRight) + 1;
+		return !Root ? 0 : _count(Root->pLeft) + _count(Root->pRight) + 1;
 	}
 
 	void _insert(int data, Element* Root)
@@ -113,7 +113,7 @@ private:
 	{
 		if (Root->Data == data) 
 		{
-			if (_ñount(Root->pLeft) > _ñount(Root->pRight)) 
+			if (_count(Root->pLeft) > _count(Root->pRight)) 
 			{
 				_insert(Root->pLeft, Root->pRight);
 				this->Root = Root->pLeft;
