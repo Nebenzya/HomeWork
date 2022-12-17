@@ -6,7 +6,7 @@ using std::endl;
 
 class Tree
 {
-private:
+protected:
 
 	class Element
 	{
@@ -15,37 +15,39 @@ private:
 		Element* pLeft;
 		Element* pRight;
 		Element(int data, Element* pLeft = nullptr, Element* pRight = nullptr) :Data(data), pLeft(pLeft), pRight(pRight) {}
+		bool isLeaf()const { return pLeft == pRight; }
 	};
 
 	Element* Root;
-	unsigned int _count;
 
 public:
 
-	Tree() : Root(nullptr), _count(0) {}
+	Tree() : Root(nullptr) {}
+	Tree(const std::initializer_list<int> list) :Tree() {
+		for (int i : list) 
+			insert(i);
+	}
 	~Tree() { clear(); }
 
-	unsigned int count() const { return _count; }
+	int count()const { return _ñount(this->Root); }
 
 	void insert(int data) {
-		if (this->Root == nullptr) this->Root = _add(data);
+		if (this->Root == nullptr) this->Root = new Element(data);
 		else _insert(data, this->Root);
 	}
 
 	void erase(int data) {
-		if (this->Root == nullptr) return;
-		_erase(this->Root, data);
+		if (this->Root != nullptr)
+			_erase(this->Root, data);
 	}
 
 	void clear() {
 		_clear(this->Root);
 		this->Root = nullptr;
-		_count = 0;
 	}
 
 	void print()const {
 		_print(this->Root);
-		cout << "\nCount = " << _count << endl;
 	}
 
 	int min()const {
@@ -61,7 +63,7 @@ public:
 	}
 
 	int avg()const {
-		return _sum(this->Root) / _count;
+		return _sum(this->Root) / count();
 	}
 
 	int depth()const {
@@ -71,107 +73,117 @@ public:
 
 private:
 
-	Element* _add(int data) {
-		_count++;
-		return new Element(data);
+	int _ñount(Element* Root)const
+	{
+		return !Root ? 0 : _ñount(Root->pLeft) + _ñount(Root->pRight) + 1;
 	}
 
 	void _insert(int data, Element* Root)
 	{
-		if (Root == nullptr) return;
-		if (Root->Data > data) {
-			if (Root->pLeft == nullptr) Root->pLeft = _add(data);
-			else _insert(data, Root->pLeft);
-		}
-		else {
-			if (Root->pRight == nullptr) Root->pRight = _add(data);
-			else _insert(data, Root->pRight);
-		}
-	}
-
-	void _insert(Element* Root, Element* Move) {
-		if (Root == nullptr || Move == nullptr)return;
-		if (Root->Data > Move->Data) {
-			if (Root->pLeft == nullptr) Root->pLeft = Move;
-			else(_insert(Root->pLeft, Move));
-		}
-		else
+		if (Root != nullptr) 
 		{
-			if (Root->pRight == nullptr) Root->pRight = Move;
-			else _insert(Root->pRight, Move);
+			if (Root->Data > data) {
+				if (Root->pLeft == nullptr) Root->pLeft = new Element(data);
+				else _insert(data, Root->pLeft);
+			}
+			else {
+				if (Root->pRight == nullptr) Root->pRight = new Element(data);
+				else _insert(data, Root->pRight);
+			}
 		}
 	}
 
-	void _erase(Element* Root, int data) {
+	void _insert(Element* Root, Element* inputElement) 
+	{
+		if (!(Root == nullptr || inputElement == nullptr)) 
+		{
+			if (Root->Data > inputElement->Data) {
+				if (Root->pLeft == nullptr) Root->pLeft = inputElement;
+				else(_insert(Root->pLeft, inputElement));
+			}
+			else
+			{
+				if (Root->pRight == nullptr) Root->pRight = inputElement;
+				else _insert(Root->pRight, inputElement);
+			}
+		}
+	}
 
-		Element* buf = Root;
-		bool isLeft = false;
-
+	void _erase(Element* Root, int data) 
+	{
 		if (Root->Data == data) 
 		{
-			_insert(Root->pLeft, Root->pRight);
-			this->Root = Root->pLeft;
-			delete buf;
-			_count--;
+			if (_ñount(Root->pLeft) > _ñount(Root->pRight)) 
+			{
+				_insert(Root->pLeft, Root->pRight);
+				this->Root = Root->pLeft;
+			}
+			else 
+			{
+				_insert(Root->pRight, Root->pLeft);
+				this->Root = Root->pRight;
+			}
+			delete Root;
 		}
 		else
 		{
+			Element* buf = Root;
 			while (Root != nullptr && Root->Data != data)
 			{
 				buf = Root;
-				if (Root->Data > data) {
-					Root = Root->pLeft;
-					isLeft = true;
-				}
-				else {
-					Root = Root->pRight;
-					isLeft = false;
-				}
+				Root->Data > data ? Root = Root->pLeft : Root = Root->pRight;
 			}
 
 			if (Root != nullptr)
 			{
-				isLeft ? buf->pLeft = nullptr : buf->pRight = nullptr;
+				buf->pLeft == Root ? buf->pLeft = nullptr : buf->pRight = nullptr;
 				_insert(this->Root, Root->pLeft);
 				_insert(this->Root, Root->pRight);
 				delete Root;
-				_count--;
 			}
 		}
-
-		
 	}
 
-	void _clear(Element* Root) {
-		if (Root == nullptr) return;
-		_clear(Root->pLeft);
-		_clear(Root->pRight);
-		delete Root;
+	void _clear(Element* Root) 
+	{
+		if (Root != nullptr) 
+		{
+			_clear(Root->pLeft);
+			_clear(Root->pRight);
+			delete Root;
+		}
 	}
 
-	void _print(Element* Root)const {
-		if (Root == nullptr)return;
-		_print(Root->pLeft);
-		cout << Root->Data << "\t";
-		_print(Root->pRight);
+	void _print(Element* Root)const 
+	{
+		if (Root != nullptr)
+		{
+			_print(Root->pLeft);
+			cout << Root->Data << "\t";
+			_print(Root->pRight);
+		}
 	}
 
-	int _min(Element* Root)const {
+	int _min(Element* Root)const 
+	{
 		if (Root->pLeft == nullptr) return Root->Data;
 		_min(Root->pLeft);
 	}
 
-	int _max(Element* Root)const {
+	int _max(Element* Root)const 
+	{
 		if (Root->pRight == nullptr) return Root->Data;
 		_max(Root->pRight);
 	}
 
-	int _sum(Element* Root)const {
+	int _sum(Element* Root)const 
+	{
 		if (Root == nullptr) return 0;
 		return Root->Data + _sum(Root->pLeft) + _sum(Root->pRight);
 	}
 
-	int _depth(Element* Root)const {
+	int _depth(Element* Root)const 
+	{
 		if (Root == nullptr) return 0;
 		int l = _depth(Root->pLeft) + 1;
 		int r = _depth(Root->pRight) + 1;
@@ -179,23 +191,31 @@ private:
 	}
 };
 
+//#define RANDOM_VALUE
+#define CHECK_ERASE
+
 void main()
 {
+#ifdef RANDOM_VALUE
 	srand(NULL);
 
 	Tree tree;
-	for (size_t i = 0; i < 15; i++)
+	int n; cin >> n;
+	for (size_t i = 0; i < n; i++)
 	{
-		tree.insert(rand() % 100);
+		tree.insert(rand());
 	}
 	tree.print();
-	cout << "Depth" << tree.depth() << endl;
+	cout << "\nDepth " << tree.depth() << endl;
+	cout << "Min and Max: " << tree.min() << "\t" << tree.max() << endl;
+	cout << "Sum and Avg: " << tree.sum() << "\t" << tree.avg() << endl;
+#endif // RANDOM_VALUE
 
-	cout << tree.min() << "\t" << tree.max() << endl;
-	cout << tree.sum() << "\t" << tree.avg() << endl;
+#ifdef CHECK_ERASE
+	Tree tree2 = { 50, 25, 75, 12, 37, 62, 87 };
+	tree2.erase(25);
+	tree2.print();
+#endif // CHECK_ERASE
 
-	tree.erase(38);
-	tree.print();
-	cout << "Depth" << tree.depth() << endl;
 
 }
