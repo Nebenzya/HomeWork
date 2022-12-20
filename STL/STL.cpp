@@ -13,7 +13,7 @@ int main()
         std::cout << "Enter index: "; std::cin >> i;
     } while (i > list.size());
 
-    
+    for (int y = 0; y < i; y++, it++){}
     list.insert(it,n);
     //list.insert(list.begin() + i, n); WHY NOT?
     
