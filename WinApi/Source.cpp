@@ -1,27 +1,15 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<Windows.h>
+#include<stdio.h>
 #include"resource.h"
+
+CONST CHAR* string[] = { "This", "is", "my", "first", "Combo", "Box" };
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-//#define MSG_BOX
-
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-#ifdef MSG_BOX
-	MessageBox(
-		NULL,
-		"Привет!",
-		"Заголовок окна",
-		MB_YESNOCANCEL | MB_HELP 
-		| MB_ICONASTERISK	
-		| MB_DEFBUTTON3		
-		| MB_SYSTEMMODAL	
-		| MB_SETFOREGROUND
-	);
-#endif // MSG_BOX
-
-	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc, 0);
-
+	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)DlgProc, 0);
 	return 0;
 }
 
@@ -29,22 +17,34 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_INITDIALOG:	//Создание элементов окна
+	case WM_INITDIALOG:
 	{
-		HICON hIcon = LoadIcon(GetModuleHandle(NULL), (LPSTR)IDI_ICON1);
-		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
+		HWND hList = GetDlgItem(hwnd, IDC_LIST1);
+		for (int i = 0; i < sizeof(string) / sizeof(string[0]); i++)
+		{
+			SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)string[i]);
+		}
 	}
 	break;
-	case WM_COMMAND:	//Обработка команд нажатия кнопок
+	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case IDOK:MessageBox(NULL, "OK", "Info", MB_OK | MB_ICONINFORMATION); 
-			break;
-		case IDCANCEL:EndDialog(hwnd, 0);
+		case IDOK:
+		{
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE] = {};
+			CHAR sz_output_buffer[SIZE] = "Вы выбрали элемент № ";
+			HWND hList = GetDlgItem(hwnd, IDC_LIST1);
+			int i = SendMessage(hList, LB_GETCURSEL, 0, 0);	//Получаем номер выделенного элемента ComboBox
+			SendMessage(hList, LB_GETTEXT, i, (LPARAM)sz_buffer);
+			sprintf(sz_output_buffer, "Вы выбрали строку № %i со значением \"%s\".", i, sz_buffer);
+			MessageBox(hwnd, sz_output_buffer, "Selected item", MB_OK | MB_ICONINFORMATION);
 		}
 		break;
-	case WM_CLOSE:	
-		EndDialog(hwnd, 0);
+		case IDCANCEL:EndDialog(hwnd, 0); break;
+		}
+		break;
+	case WM_CLOSE: EndDialog(hwnd, 0);
 	}
 	return FALSE;
 }
