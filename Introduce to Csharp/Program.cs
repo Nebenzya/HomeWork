@@ -1,101 +1,103 @@
 ﻿using static System.Console;
 
-//Задание 1
+string choice;
 
-#if false
-
-if (int.TryParse(ReadLine(), out int num))
+while (true)
 {
-    if (num > 0 && num < 101)
-    {
-        if (num % 3 == 0) WriteLine("Fizz");
-        if (num % 5 == 0) WriteLine("Buzz");
-        if (num % 3 != 0 && num % 5 != 0) WriteLine(num);
-    }
+    WriteLine("Выбирай: Викторина - В, Угадай число - Ч");
+    choice = ReadLine();
+    if (choice.ToLower() == "в")
+        startQuiz();
+    else if (choice.ToLower() == "ч")
+        guessNumber();
     else
-        WriteLine("Error");
-} 
-#endif
-
-
-//Задание 2
-
-#if false
-
-if (int.TryParse(ReadLine(), out int num2) && int.TryParse(ReadLine(), out int perс))
-{
-    WriteLine(num2 * ((double)perс / 100));
-} 
-#endif
-
-
-//Задание 3
-
-#if false
-
-string str = string.Empty;
-
-for (int i = 0; i < 4; i++)
-{
-    str += ReadLine();
+        WriteLine("Ты ввёл что то не то!");
 }
 
-WriteLine(str);
 
-#endif
-
-
-//Задание 4
-
-#if false
-string str = ReadLine();
-int index1 = int.Parse(ReadLine()), index2 = int.Parse(ReadLine());
-
-if (str.Length == 6 || int.TryParse(str, out int x))
+static void startQuiz()
 {
-    char buf = str[index1];
-    str = str.Replace(str[index1], str[index2]);
-    WriteLine(str.Replace(str[index2], buf));
+    List<Quiz> list = new()
+            {
+                new Quiz("Зимой и летом одним цветом?", "Это дерево!" ,new List<string>{ "ёлка","елка","ель","сосна" } ),
+                new Quiz("Самая высокая гора?", "Начинается на \"Э\"" , new List<string>{ "эверест" } ),
+                new Quiz( "Самая длинная река?", "Там ещё пираньи обитают...", new List<string>{ "амазонка" }),
+                new Quiz("Самый большой океан?", "Он не громкий...", new List < string > { "тихий", "тихий океан" }),
+                new Quiz("Самая большая планета?", "Находится перед Сатурном", new List < string > { "юпитер" })
+            };
+
+    string userAnswer;
+    int counterOfRightAnswers = 0;
+
+    foreach (var item in list)
+    {
+        WriteLine(item.question);
+
+        for (int i = 0; i < 2; i++)
+        {
+            userAnswer = ReadLine().ToLower();
+            if (item.answer.Contains(userAnswer))
+            {
+                counterOfRightAnswers++;
+                WriteLine("Ответ верный!");
+                break;
+            }
+            else
+                WriteLine($"Ответ неверный! Подсказка: {item.hint}");
+
+        }
+    }
+
+    if (counterOfRightAnswers > list.Count / 2)
+        WriteLine($"Правильных ответов: {counterOfRightAnswers}.\nХорошо справился!");
+    else
+        WriteLine($"Можно было и лучше ответить!\nПравильных ответов: {counterOfRightAnswers}");
+
 }
 
-#endif
-
-
-//Задание 5
-
-#if false
-
-DateTime inputDate = DateTime.Parse(ReadLine());
-
-if (inputDate.Month == 1 || inputDate.Month == 2 || inputDate.Month == 12) Write("Winter ");
-else if (inputDate.Month > 2 && inputDate.Month < 6) Write("Spring ");
-else if (inputDate.Month > 5 && inputDate.Month < 9) Write("Summer ");
-else Write("Autumn ");
-
-WriteLine(inputDate.DayOfWeek.ToString());
-
-#endif
-
-
-//Задание 6
-
-#if false
-if (float.TryParse(ReadLine(), out float temp))
+static void guessNumber()
 {
-    string toConvert = ReadLine();
-    if (toConvert == "C" || toConvert == "c") WriteLine($"{5.0f / 9 * (temp - 32)}C");
-    else if (toConvert == "F" || toConvert == "f") WriteLine($"{temp * 9.0f / 5 + 32}F");
-} 
-#endif
+    int magicNumber = new Random().Next(0, 100);
+    int userNumber = 0;
+    int count = 0, attempt = 10;
 
+    do
+    {
+        Write("Введи число: ");
+        userNumber = Int32.Parse(ReadLine());
+        count++;
+        if (userNumber < magicNumber)
+        {
+            WriteLine("Загаданное число больше!");
+        }
+        else if (userNumber > magicNumber)
+        {
+            WriteLine("Загаданное число меньше!");
+        }
+        else if (userNumber == magicNumber)
+        {
+            WriteLine("Ты угадал! Тебе понадобилось " + count + " попыток");
+            break;
+        }
+        attempt--;
 
-//Задание 7
+    } while (userNumber != magicNumber && attempt > 0);
 
-if (int.TryParse(ReadLine(), out int x) && int.TryParse(ReadLine(), out int y))
-{
-    int min, max;
-    if (x > y) { min = y; max = x; }
-    else { min = x; max = y; }
-    for (; min < max; min++)
-        if (min % 2 == 0) Write(min + " ");
+    if (attempt <= 0)
+        WriteLine("Ты не справился!");
 }
+
+
+class Quiz
+{
+    public string question, hint;
+    public List<string> answer;
+
+    public Quiz(string question, string hint, List<string> answer)
+    {
+        this.question = question;
+        this.hint = hint;
+        this.answer = answer;
+    }
+}
+
