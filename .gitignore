@@ -64,3 +64,7 @@
 /OperatorOverloading/obj
 /Interface/obj/Debug/net6.0
 /Interface/bin/Debug/net6.0
+/Interface/obj
+/Tamagotchi/bin/Debug/net6.0-windows
+/Tamagotchi/obj
+/Tamagotchi/bin/Release/net6.0-windows
