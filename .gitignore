@@ -69,3 +69,6 @@
 /Tamagotchi/obj
 /Tamagotchi/bin/Release/net6.0-windows
 /IComparable/obj
+/CarRacing/bin/Release/net6.0
+/CarRacing/obj
+/IComparable/bin/Release/net6.0
