@@ -56,7 +56,7 @@ void SaveDictionary()
 {
     if(myDictionary != null)
     {
-
+        myDictionary.Save();
     }
     else 
     {
