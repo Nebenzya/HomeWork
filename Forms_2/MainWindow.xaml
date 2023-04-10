@@ -1,0 +1,9 @@
+﻿<Window x:Class="Forms_2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="450" Width="800">
+    <Canvas>
+        <Label x:Name="lbStatic" Content="Статик" Canvas.Top="200" Canvas.Left="370"  Background="#FFFFA0A0" Width="60" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" MouseEnter="lbStatic_MouseEnter"/>
+
+    </Canvas>
+</Window>
