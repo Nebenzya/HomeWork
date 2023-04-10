@@ -76,3 +76,5 @@
 /DictionaryApp/obj
 /Iinvoice For Payment/bin/Release/net6.0
 /Iinvoice For Payment/obj
+/DisplaySize/obj/Debug/net6.0
+*.csproj
