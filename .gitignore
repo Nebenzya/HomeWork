@@ -30,6 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Folders
+**/obj
+**/bin
+**/.vs
+
 /IntroductionToOOP/x64/Debug
 /.vs/HomeWork/v17
 /.vs
@@ -84,3 +90,26 @@
 /Forms_2/bin/Debug/net6.0-windows
 /Forms_2/obj
 /Keyboard Trainer/obj/Release
+/Academy/x64/Release
+/BinaryTree/x64/Release
+/Files/x64/Release
+/Fraction/x64/Release
+/Geometry/x64/Release
+/Interface/bin/Release/net6.0
+/Introdice to WPF/bin/Release/net6.0-windows
+/Introdice to WPF/obj
+/Introduce to Csharp 2/bin/Release/net6.0
+/Introduce to Csharp 3/bin/Release/net6.0
+/IntroductionToOOP/x64/Release
+/Keyboard Trainer/bin/Release
+/List/x64/Release
+/List2/x64/Release
+/ListTemplate/x64/Release
+/NULLTerminatedLines/x64/Release
+/RAW/x64/Release
+/STL/x64/Release/STL.tlog/CL.command.1.tlog
+/STL/x64/Release
+/String/x64/Release/String.tlog/CL.command.1.tlog
+/String/x64/Release
+/UML/x64/Release
+/WinApi/x64/Release
