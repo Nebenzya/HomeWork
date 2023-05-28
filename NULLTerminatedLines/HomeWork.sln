@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyboard Trainer", "..\Keyb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introdice to WPF", "..\Introdice to WPF\Introdice to WPF.csproj", "{A31C4EA5-DF70-4F91-A364-6F154125BF59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Journal", "..\Journal\Journal.csproj", "{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -405,6 +407,18 @@ Global
 		{A31C4EA5-DF70-4F91-A364-6F154125BF59}.Release|x64.Build.0 = Release|Any CPU
 		{A31C4EA5-DF70-4F91-A364-6F154125BF59}.Release|x86.ActiveCfg = Release|Any CPU
 		{A31C4EA5-DF70-4F91-A364-6F154125BF59}.Release|x86.Build.0 = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|x64.Build.0 = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|x64.ActiveCfg = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|x64.Build.0 = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBDB0AA8-9B1B-469C-9D1B-8E9939E44980}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
