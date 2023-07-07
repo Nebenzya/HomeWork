@@ -1,6 +1,11 @@
 ﻿using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
 
-string connectionString = @"Data Source=USER\SQLEXPRESS;Initial Catalog=userdb;Integrated Security=True";
+string? connectionString = ConfigurationManager.AppSettings["connectionString"];
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidDataException("Check app.config! \"connectionString\" doesn't have to be empty");
 
 Console.WriteLine("Введите название продукта:");
 string name = Console.ReadLine();
@@ -10,38 +15,58 @@ int.TryParse(Console.ReadLine(), out int price);
 
 string sqlExpression = $"INSERT INTO Product([Name],[Price]) VALUES ('{name}', {price})";
 
-Insert(connectionString, sqlExpression);
+var dbconn = new MyDBconnection(connectionString);
+
+int affectedRows = await dbconn.Insert(sqlExpression);
+Console.WriteLine($"Изменено строк {affectedRows}");
+
+dbconn.ShowAllItems("Product");
 
 
-ShowAllItems(connectionString, "Product");
-
-
-void Insert(string connectionString, string sqlExpression)
+class MyDBconnection
 {
-    using (SqlConnection connection = new SqlConnection(connectionString))
+    private string connectionString;
+
+    public MyDBconnection(string connectionString)
     {
-        connection.Open();
-        SqlCommand command = new SqlCommand(sqlExpression, connection);
-        //int number = command.ExecuteNonQuery();
-        //Console.WriteLine("Добавлено объектов: {0}", number);
+        this.connectionString = connectionString;
     }
-}
 
-
-void ShowAllItems(string connectionString, string tableName)
-{
-    using (SqlConnection connection = new SqlConnection(connectionString))
+    public async Task<int> Insert(string sqlExpression)
     {
-        connection.Open();
-        SqlCommand command = new SqlCommand($"SELECT * FROM {tableName}", connection);
-        var reader = command.ExecuteReader();
-
-        while (reader.Read())
+        using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            //далее читаем все нужные поля и выводим в удобном виде
+            connection.Open();
+            SqlCommand command = new SqlCommand(sqlExpression, connection);
+            int number = await command.ExecuteNonQueryAsync();
+            return number;
+        }
+    }
 
-            // object value1 = reader.GetValue(i)  
-            // object value2 = reader.GetValue(i+1)
+    public async void ShowAllItems(string tableName)
+    {
+        string sql = $"SELECT * FROM {tableName}";
+
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter(sql, connection);
+            DataSet ds = new DataSet();
+            adapter.Fill(ds);
+
+            foreach (DataTable dt in ds.Tables)
+            {
+                foreach (DataColumn column in dt.Columns)
+                    Console.Write($"{column.ColumnName}\t");
+                Console.WriteLine();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    var cells = row.ItemArray;
+                    foreach (object cell in cells)
+                        Console.Write($"{cell}\t");
+                    Console.WriteLine();
+                }
+            }
         }
     }
 }
